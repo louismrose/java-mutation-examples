@@ -58,3 +58,32 @@ Note that to add support for PIT to the project, the following XML had to be add
     
 Further configuration options for PIT are described at: http://pitest.org/quickstart/maven/
 
+## Judy
+
+Run the following command from the `judy` directory in the terminal: `java -jar judy-2.1.0.jar -w ../target -c classes -t test-classes`
+
+This will create a `judy/logging/judy.log` file for debugging and a `judy-result.xml` results file. At the moment this seems to result in 0 mutants on my machine, and I'm not quite sure why...
+
+Also, the following addition to the pom.xml should allow Judy to be run via `mvn antrun:ant` but this fails at the moment due to the workspace parameter not being a directory, which is odd because the equivalent command on the terminal works fine...
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <configuration>
+          <target>
+            <java dir="judy" jar="judy/judy-2.1.0.jar" fork="true">
+              <jvmarg value="-XX:MaxPermSize=2048m"/>
+              <jvmarg value="-Xmx2048m"/>
+              <jvmarg value="-Xms2048m"/>
+              <jvmarg value="-Xmn512m"/>
+              <jvmarg value="-Xss512k"/>
+              <jvmarg value="-XX:+UseG1GC"/>
+              <arg value="-w ${project.build.directory}"/>
+              <arg value="-c classes"/>
+              <arg value="-t test-classes"/>
+            </java>
+          </target>
+        </configuration>
+      </plugin>
+      
