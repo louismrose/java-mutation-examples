@@ -15,4 +15,25 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+          <groupId>org.pitest</groupId>
+          <artifactId>pitest-maven</artifactId>
+          <version>1.1.2</version>
+          <configuration>
+              <targetClasses>
+                  <param>uk.ac.york.cs*</param>
+              </targetClasses>
+              <targetTests>
+                  <param>uk.ac.york.cs*</param>
+              </targetTests>
+              <outputFormats>
+                <param>HTML</param>
+                <param>XML</param>
+              </outputFormats>
+          </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
