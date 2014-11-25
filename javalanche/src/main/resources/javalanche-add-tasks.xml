@@ -1,0 +1,78 @@
+<project name="javalanche-add-tasks" default="">
+	
+	<import file="./javalanche-tasks.xml" />
+	
+	<!--
+	Test the performance of file writing onthe current system.
+	-->
+	<target name="testFilePerformance">
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.FilePerformanceTest" maxmemory="${javalanche.maxmemory}" fork="true">
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+	
+	
+	
+	<target name="runMutationsDebug" description="* debug task that runs a given mutation task but inserts the orignial statement instead of the mutated statement">
+		<property name="run.mutations.debug.mutation.javaagent" value="-javaagent:${javalanche.mutation.javaagent}"/>
+		<property name="run.mutations.debug.memory" value="-Xmx1524m"/>
+		<property name="run.mutations.debug.mutation.run.mode" value="-Dmutation.run.mode=mutation"/>
+		<property name="run.mutations.debug.javalanche.package.prefix" value="-Djavalanche.project.prefix=${project.prefix}"/>
+		<property name="run.mutations.debug.javalanche.project.tests" value="-Djavalanche.tests=${project.tests}"/>
+		<property name="run.mutations.debug.mutation.file" value="-Djavalanche.mutation.file=${mutation.file}"/>
+		<property name="run.mutations.debug.mutation.result.file" value="-Dmutation.result.file=${mutation.result.file}"/>
+		<property name="run.mutations.debug.verbose" value="-verbose"/>
+		<property name="run.mutations.debug.debug" value="-Djavalanche.debug.insert.original.code=true"/>
+		<property name="run.mutations.debug.listener" value="-Djavalanche.mutation.test.listener=de.unisb.cs.st.javalanche.mutation.runtime.jmx.JmxMutationTestListener"/>
+		<path id="run.mutations.debug.classpath.add">
+			<path refid="mutation.classpath"/>
+		</path>
+			<!--${run.mutations.debug.verbose}-->
+		<antcall target="${javalanche.task}">
+			<param name="javalanche.arg.line" value="${run.mutations.debug.mutation.javaagent} ${run.mutations.debug.memory} ${run.mutations.debug.mutation.run.mode} ${run.mutations.debug.javalanche.package.prefix} ${run.mutations.debug.javalanche.project.tests} ${run.mutations.debug.mutation.file} ${run.mutations.debug.mutation.result.file} ${run.mutations.debug.listener} ${run.mutations.debug.debug}" />
+			<reference refid="run.mutations.debug.classpath.add" torefid="javalanche.classpath.add"/>
+		</antcall>
+	</target>
+	
+	
+	
+	<target name="printBytecode" description="* print a classes bytecode (specified in property -Dclass.name=)">
+		<echo> Printing bytecode for class: ${class.name} </echo>
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.AsmUtil" fork="true">
+			<sysproperty key="class.name" value="${class.name}" />
+			<classpath>
+			         <path refid="cp"/>
+					 <path refid="mutation.classpath"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="displayCoverageData" description="* display coverage data for this project">
+		<echo> Coverage data for project: ${project.prefix} </echo>
+		<java classname="de.unisb.cs.st.javalanche.mutation.util.DisplayCoverageData" maxmemory="${javalanche.maxmemory}" fork="true">
+			<sysproperty key="javalanche.project.prefix" value="${project.prefix}" />
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+
+	
+	<target name="startJmxClient" description="* start a jmx client that displays monitoring data for all mutation testsing processes">
+		<java classname="de.unisb.cs.st.javalanche.mutation.runtime.jmx.MutationMxClient" maxmemory="${javalanche.maxmemory}" fork="true">
+			<sysproperty key="javalanche.project.prefix" value="${project.prefix}" />
+			<classpath>
+				<path refid="mutation.classpath" />
+			</classpath>
+		</java>
+	</target>
+
+	
+
+
+	
+	
+
+</project>

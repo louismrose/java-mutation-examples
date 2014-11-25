@@ -58,13 +58,37 @@ Note that to add support for PIT to the project, the following XML had to be add
     
 Further configuration options for PIT are described at: http://pitest.org/quickstart/maven/
 
+## Javalanche
+
+Run `mvn test`. Run the following command from the `javalance` directory in the terminal: `ant -f javalanche.xml -Dprefix=uk.ac.york.cs -Dcp=../target/classes/:../target/test-classes -Dtests=uk.ac.york.cs.AppTest -Djavalanche=. mutationTest`
+
+Also, the following addition to the pom.xml should allow Javalance to be run via `mvn antrun:run` but this fails at the moment because the javalance.xml Ant file cannot access the JUnit Ant task, which is odd because it works on the command line without any extra configuration...!
+
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-antrun-plugin</artifactId>
+      <version>1.7</version>
+      <configuration>
+        <target>
+          <ant dir="javalanche" antfile="javalanche.xml" target="mutationTest">
+            <property name="prefix" value="uk.ac.york.cs"/>
+            <property name="cp" value="../target/classes:../target/test-classes"/>
+            <property name="tests" value="uk.ac.york.cs.AppTest"/>
+            <property name="javalanche" value="."/>
+          </ant>
+        </target>
+      </configuration>
+    </plugin>
+
+This will create a `javalanche/mutation-files` directory which contains a human readable report (`report/index.html`) and some other machine processable files (not sure if any of these are that useful for us, however).
+
 ## Judy
 
-Run the following command from the `judy` directory in the terminal: `java -jar judy-2.1.0.jar -w ../target -c classes -t test-classes`
+Run `mvn test`. Run the following command from the `judy` directory in the terminal: `java -jar judy-2.1.0.jar -w ../target -c classes -t test-classes`
 
 This will create a `judy/logging/judy.log` file for debugging and a `judy-result.xml` results file. At the moment this seems to result in 0 mutants on my machine, and I'm not quite sure why...
 
-Also, the following addition to the pom.xml should allow Judy to be run via `mvn antrun:ant` but this fails at the moment due to the workspace parameter not being a directory, which is odd because the equivalent command on the terminal works fine...
+Also, the following addition to the pom.xml should allow Judy to be run via `mvn antrun:run` but this fails at the moment due to the workspace parameter not being a directory, which is odd because the equivalent command on the terminal works fine...
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -86,4 +110,3 @@ Also, the following addition to the pom.xml should allow Judy to be run via `mvn
           </target>
         </configuration>
       </plugin>
-      

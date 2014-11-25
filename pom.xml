@@ -41,21 +41,15 @@
         <version>1.7</version>
         <configuration>
           <target>
-            <java dir="judy" jar="judy/judy-2.1.0.jar" fork="true">
-              <jvmarg value="-XX:MaxPermSize=2048m"/>
-              <jvmarg value="-Xmx2048m"/>
-              <jvmarg value="-Xms2048m"/>
-              <jvmarg value="-Xmn512m"/>
-              <jvmarg value="-Xss512k"/>
-              <jvmarg value="-XX:+UseG1GC"/>
-              <arg value="-w ${project.build.directory}"/>
-              <arg value="-c classes"/>
-              <arg value="-t test-classes"/>
-            </java>
+            <ant dir="javalanche" antfile="javalanche.xml" target="mutationTest">
+              <property name="prefix" value="uk.ac.york.cs"/>
+              <property name="cp" value="../target/classes:../target/test-classes"/>
+              <property name="tests" value="uk.ac.york.cs.AppTest"/>
+              <property name="javalanche" value="."/>
+            </ant>
           </target>
         </configuration>
       </plugin>
-      
     </plugins>
   </build>
 </project>
